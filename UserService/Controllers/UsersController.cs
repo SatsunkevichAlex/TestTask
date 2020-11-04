@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
+using System.Linq;
 using System.Threading.Tasks;
 using UserService.Extensions;
 using UserService.Models;
@@ -15,6 +16,16 @@ namespace UserService.Controllers
         public UsersController(UserDataService usersData)
         {
             _usersData = usersData;
+        }
+
+        [HttpGet]
+        [Route("[controller]/get-user-info")]
+        public IActionResult GetUserInfo(int Id)
+        {
+            var users = _usersData.Users;
+            var user = _usersData.Users
+                .SingleOrDefault(it => it.Id == Id);
+            return Content(user.ToXml(), new MediaTypeHeaderValue("application/xml"));
         }
 
         [HttpPost]

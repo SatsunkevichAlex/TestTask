@@ -9,8 +9,8 @@ namespace UserService.Services
     public class UserDataService
     {
         private const int expiredAfter = 10;
-        private readonly DateTime _updated;
         private readonly DbHelper _db;
+        private DateTime _updated;
         private List<User> _users;
 
         public List<User> Users
@@ -30,20 +30,24 @@ namespace UserService.Services
         {
             _updated = DateTime.Now;
             _db = new DbHelper();
-            Users = GetAllUsers();
+            _users = GetAllUsers();
         }
 
         public async Task<int> CreateUser(User user)
         {
-           return await _db.CreateUser(user);
+            return await _db.CreateUser(user);
         }
 
         private bool IsExpired()
         {
-            return DateTime.Now.Subtract(_updated)
-                 .TotalMinutes > expiredAfter ?
-                 true :
-                 false;
+            var minutesSinceLastUpdate = DateTime.Now.Subtract(_updated)
+                 .TotalMinutes;
+            if (minutesSinceLastUpdate > expiredAfter)
+            {
+                _updated = DateTime.Now;
+                return true;
+            }
+            return false;
         }
 
         private List<User> GetAllUsers()
