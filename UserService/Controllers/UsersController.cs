@@ -25,11 +25,10 @@ namespace UserService.Controllers
         [HttpGet]
         [AllowAnonymous]
         [Route("get-user-info")]
-        public IActionResult GetUserInfo(int Id)
+        public IActionResult GetUserInfo()
         {
-            var users = _usersData.Users;
             var user = _usersData.Users
-                .SingleOrDefault(it => it.Id == Id);
+                .FirstOrDefault();
             return Content(user.ToXml(),
                 new MediaTypeHeaderValue("application/xml"));
         }

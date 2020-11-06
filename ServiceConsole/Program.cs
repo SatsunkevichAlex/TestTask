@@ -10,11 +10,15 @@ namespace ServiceConsole
         {
             Console.WriteLine("Test task console app.");
             Console.WriteLine("For exit press Esc");
-            Console.WriteLine("For send create user request press 1");
-            Console.WriteLine("For send remove request press 2");
-            Console.WriteLine("For send user info request press 3");
+            Console.WriteLine("1: create user request");
+            Console.WriteLine("2: remove request press");
+            Console.WriteLine("3: user info request");
+            Console.WriteLine("4: create user error");
+            Console.WriteLine("5: remove user error");
+            Console.WriteLine("ESC: exit");
 
-            while (true)
+            bool flag = true;
+            while (flag)
             {
                 var key = Console.ReadKey().Key;
                 Console.WriteLine();
@@ -30,6 +34,15 @@ namespace ServiceConsole
                     case ConsoleKey.D3:
                         UserInfoFlow();
                         break;
+                    case ConsoleKey.D4:
+                        CreateUserErrorFlow();
+                        break;
+                    case ConsoleKey.D5:
+                        DeleteUserErrorFlow();
+                        break;
+                    case ConsoleKey.Escape:
+                        flag = false;
+                        break;
                     default:
                         Console.WriteLine("Key is not recognized");
                         break;
@@ -37,18 +50,18 @@ namespace ServiceConsole
             }
         }
 
-        private static User CreateRandomUser()
+        private async static void CreateUserErrorFlow()
         {
-            var random = new Random();
-            return new User
-            {
-                Id = random.Next(),
-                Name = "testName" + random.Next(),
-                Status = UserStatus.New
-            };
-        }
+            var user = CreateRandomUser();
+            var requestSender = new UserServiceRequestSender();
 
-        private async static void UserInfoFlow()
+            var createResponse = await requestSender.CreateUserRequestAsync(user);
+            Console.WriteLine(createResponse.Content);
+            createResponse = await requestSender.CreateUserRequestAsync(user);
+            Console.WriteLine(createResponse.Content);
+        }
+        
+        private async static void DeleteUserErrorFlow()
         {
             var user = CreateRandomUser();
             var requestSender = new UserServiceRequestSender();
@@ -56,7 +69,16 @@ namespace ServiceConsole
             var createResponse = await requestSender.CreateUserRequestAsync(user);
             Console.WriteLine(createResponse.Content);
 
-            var infoResponse = await requestSender.GetUserInfoAsync(user);
+            var removeRespopnse = await requestSender.RemoveUserAsync(user);
+            Console.WriteLine(removeRespopnse.Content);
+            removeRespopnse = await requestSender.RemoveUserAsync(user);
+            Console.WriteLine(removeRespopnse.Content);
+        }
+
+        private async static void UserInfoFlow()
+        {
+            var requestSender = new UserServiceRequestSender();
+            var infoResponse = await requestSender.GetUserInfoAsync();
             Console.WriteLine(infoResponse.Content);
         }
 
@@ -79,6 +101,17 @@ namespace ServiceConsole
 
             var createResponse = await requestSender.CreateUserRequestAsync(user);
             Console.WriteLine(createResponse.Content);
+        }
+
+        private static User CreateRandomUser()
+        {
+            var random = new Random();
+            return new User
+            {
+                Id = random.Next(),
+                Name = "testName" + random.Next(),
+                Status = UserStatus.New
+            };
         }
     }
 }

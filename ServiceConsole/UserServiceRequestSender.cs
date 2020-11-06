@@ -32,14 +32,13 @@ namespace ServiceConsole
             return await _client.ExecuteAsync<CreateUserResponse>(request);
         }
 
-        public async Task<IRestResponse> GetUserInfoAsync(User user)
+        public async Task<IRestResponse> GetUserInfoAsync()
         {
             var request = new RestRequest
             {
                 Resource = "http://localhost:5000/users/get-user-info",
                 Method = Method.GET
             };
-            request.AddParameter("Id", user.Id);
             return await _client.ExecuteAsync(request);
         }
 
