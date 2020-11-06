@@ -16,11 +16,9 @@ namespace UserService.Extensions
             var xml = "";
             using (var sw = new StringWriter())
             {
-                using (var writer = XmlWriter.Create(sw, settings))
-                {
-                    serializer.Serialize(writer, value, ns);
-                    xml = sw.ToString();
-                }
+                using var writer = XmlWriter.Create(sw, settings);
+                serializer.Serialize(writer, value, ns);
+                xml = sw.ToString();
             }
 
             return xml;

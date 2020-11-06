@@ -17,5 +17,19 @@
            FROM Users
            WHERE Id = @Id
         ";
+
+        public static string RemoveUser = @"
+           UPDATE Users
+           SET Status = 'Deleted'
+           OUTPUT Inserted.*
+           WHERE Id = @Id
+        ";
+        
+        public static string IsDeleted = @"
+            SELECT TOP 1 *
+            FROM Users
+            WHERE Status = 'Deleted'
+                AND Id = @Id
+        ";
     }
 }

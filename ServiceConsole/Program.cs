@@ -6,6 +6,7 @@ namespace ServiceConsole
     {
         static void Main(string[] args)
         {
+
             Console.WriteLine("Hello World!");
         }
     }

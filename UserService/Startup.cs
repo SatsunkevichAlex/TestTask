@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -18,7 +19,11 @@ namespace UserService
 
         public void ConfigureServices(IServiceCollection services)
         {            
-            services.AddSingleton<UserDataService>();
+            services.AddSingleton<IUserDataService,UserDataService>();
+            services.AddScoped<IAuthService, AuthService>();
+            services.AddAuthentication("BasicAuthentication")
+                .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>(
+                    "BasicAuthentication", null);
             services.AddControllers(options => 
                 options.RespectBrowserAcceptHeader = true)
                     .AddXmlSerializerFormatters()
@@ -34,6 +39,7 @@ namespace UserService
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
