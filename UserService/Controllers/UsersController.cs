@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
+using Newtonsoft.Json;
 using System.Linq;
 using System.Threading.Tasks;
 using UserService.Extensions;
@@ -9,32 +11,37 @@ using UserService.Services;
 namespace UserService.Controllers
 {
     [ApiController]
+    [Authorize]
+    [Route("[controller]")]
     public class UsersController : ControllerBase
     {
-        private readonly UserDataService _usersData;
+        private readonly IUserDataService _usersData;
 
-        public UsersController(UserDataService usersData)
+        public UsersController(IUserDataService usersData)
         {
             _usersData = usersData;
         }
 
         [HttpGet]
-        [Route("[controller]/get-user-info")]
+        [AllowAnonymous]
+        [Route("get-user-info")]
         public IActionResult GetUserInfo(int Id)
         {
             var users = _usersData.Users;
             var user = _usersData.Users
                 .SingleOrDefault(it => it.Id == Id);
-            return Content(user.ToXml(), new MediaTypeHeaderValue("application/xml"));
+            return Content(user.ToXml(),
+                new MediaTypeHeaderValue("application/xml"));
         }
 
         [HttpPost]
-        [Route("[controller]/Auth/create-user")]
+        [Route("Auth/create-user")]
         public async Task<IActionResult> CreateUser(
             [FromBody] CreateUserRequest request
         )
         {
-            var status = await _usersData.CreateUser(request.User);
+            var status = await
+                _usersData.CreateUserAsync(request.User);
             if (status == -1)
             {
                 return Content(new ErrorResponse
@@ -50,6 +57,43 @@ namespace UserService.Controllers
                 Success = true,
                 ErrorId = 0
             }.ToXml(), new MediaTypeHeaderValue("application/xml"));
+        }
+
+        [HttpPost]
+        [Route("Auth/remove-user")]
+        public async Task<IActionResult> RemoveUser(
+            [FromBody] RemoveUserRequest request
+        )
+        {
+            if (await _usersData.IsDeleted(request.RemoveUser.Id))
+            {
+                return Content($"User {request.RemoveUser.Id} already marked as deleted",
+                    new MediaTypeHeaderValue("application/json"));
+            }
+
+            var user = await
+                _usersData.RemoveUserAsync(request.RemoveUser.Id);
+
+            if (user != null)
+            {
+                return Content(JsonConvert.SerializeObject(
+                        new RemoveUserResponse
+                        {
+                            Message = "User was removed",
+                            Success = true,
+                            User = user
+                        }), new MediaTypeHeaderValue("application/json"));
+            }
+
+            return Content(JsonConvert.SerializeObject(
+                    new ErrorResponse
+                    {
+                        ErrorId = 2,
+                        ErrorMessage = "User not found",
+                        Success = false
+                    }
+                ),
+                new MediaTypeHeaderValue("application/json"));
         }
     }
 }

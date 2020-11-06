@@ -6,7 +6,7 @@ using UserService.Models;
 
 namespace UserService.Services
 {
-    public class UserDataService
+    public class UserDataService : IUserDataService
     {
         private const int expiredAfter = 10;
         private readonly DbHelper _db;
@@ -33,9 +33,19 @@ namespace UserService.Services
             _users = GetAllUsers();
         }
 
-        public async Task<int> CreateUser(User user)
+        public async Task<int> CreateUserAsync(User user)
         {
             return await _db.CreateUser(user);
+        }
+
+        public async Task<User> RemoveUserAsync(int id)
+        {
+            return await _db.RemoveUser(id);
+        }
+
+        public async Task<bool> IsDeleted(int id)
+        {
+            return await _db.IsDeleted(id);
         }
 
         private bool IsExpired()

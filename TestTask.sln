@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceConsole", "ServiceCo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserService", "UserService\UserService.csproj", "{CE9810A9-94B3-45AE-A5A8-986EA768BDAE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestTaskTests", "TestTaskTests\TestTaskTests.csproj", "{8F14DD5C-3521-431C-B9FF-E6DC95149793}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestTaskTests", "TestTaskTests\TestTaskTests.csproj", "{8F14DD5C-3521-431C-B9FF-E6DC95149793}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
