@@ -15,9 +15,9 @@ namespace UserService.Controllers
     [Route("[controller]")]
     public class UsersController : ControllerBase
     {
-        private readonly UserDataService _usersData;
+        private readonly IUserDataService _usersData;
 
-        public UsersController(UserDataService usersData)
+        public UsersController(IUserDataService usersData)
         {
             _usersData = usersData;
         }
