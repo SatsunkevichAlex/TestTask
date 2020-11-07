@@ -38,9 +38,9 @@ namespace UserService.Services
             return await _db.CreateUser(user);
         }
 
-        public async Task<User> RemoveUserAsync(int id)
+        public async Task<User> SetDeletedUserAsync(int id)
         {
-            return await _db.RemoveUser(id);
+            return await _db.SetDeleted(id);
         }
 
         public async Task<bool> IsDeleted(int id)
@@ -50,8 +50,8 @@ namespace UserService.Services
 
         private bool IsExpired()
         {
-            var minutesSinceLastUpdate = DateTime.Now.Subtract(_updated)
-                 .TotalMinutes;
+            var minutesSinceLastUpdate =
+                DateTime.Now.Subtract(_updated).TotalMinutes;
             if (minutesSinceLastUpdate > expiredAfter)
             {
                 _updated = DateTime.Now;

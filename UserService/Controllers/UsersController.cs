@@ -71,7 +71,7 @@ namespace UserService.Controllers
             }
 
             var user = await
-                _usersData.RemoveUserAsync(request.RemoveUser.Id);
+                _usersData.SetDeletedUserAsync(request.RemoveUser.Id);
 
             if (user != null)
             {

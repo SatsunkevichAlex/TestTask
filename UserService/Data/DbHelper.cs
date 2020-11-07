@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -16,10 +17,15 @@ namespace UserService.Data
 
         public async Task<int> CreateUser(User user)
         {
+            if (user == null)
+            {
+                return -2;
+            }
+
             if (IsExisted(user))
             {
                 return -1;
-            }
+            }          
 
             using IDbConnection db = new SqlConnection(connectionString);
             return await db.ExecuteAsync(Queries.InsertUser, new
@@ -30,7 +36,7 @@ namespace UserService.Data
             });
         }
 
-        public async Task<User> RemoveUser(int id)
+        public async Task<User> SetDeleted(int id)
         {
             using IDbConnection db = new SqlConnection(connectionString);
             return await db.QueryFirstOrDefaultAsync<User>(Queries.RemoveUser, new
@@ -42,7 +48,7 @@ namespace UserService.Data
         public async Task<bool> IsDeleted(int id)
         {
             using IDbConnection db = new SqlConnection(connectionString);
-            return (await db.QueryAsync<User>(Queries.IsDeleted, new 
+            return (await db.QueryAsync<User>(Queries.IsDeleted, new
             {
                 Id = id
             })).Any();

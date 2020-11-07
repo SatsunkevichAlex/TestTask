@@ -8,6 +8,11 @@ namespace UserService.Extensions
     {
         public static string ToXml<T>(this T value) where T : new()
         {
+            if (value == null)
+            {
+                return string.Empty;
+            }
+
             XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
             ns.Add("", "");
 
